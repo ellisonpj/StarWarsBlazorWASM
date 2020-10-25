@@ -1,0 +1,64 @@
+﻿@page "/movielist"
+
+@inject HttpClient _httpClient
+
+<h3>Star Wars Movie List</h3>
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <div class="h2">@errorString</div>
+}
+else if (movies is null)
+{
+    <div class="d-flex align-items-center">
+        <strong>Loading...</strong>
+        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Movie Name</th>
+                <th>Movie ID</th>
+                @*<th>Opening Crawl</th>*@
+                <th>Producer</th>
+                <th>Director</th>
+                <th>Release Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in movies.Results)
+            {
+                <tr>
+                    <td><a href="@($"/moviedetails/{m.Url.Substring(27)}")">@m.Title</a></td>
+                    <td>@m.Episode_id</td>
+                    @*<td>@m.Opening_crawl</td>*@
+                    <td>@m.Producer</td>
+                    <td>@m.Director</td>
+                    <td>@(Convert.ToDateTime(m.Release_date).Year)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    Movies movies;
+    string errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            movies = await _httpClient.GetFromJsonAsync<Movies>("films/");
+            errorString = null;
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting our Film List: { ex.Message }";
+        }
+    }
+}

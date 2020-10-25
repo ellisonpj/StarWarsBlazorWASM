@@ -1,0 +1,70 @@
+﻿@inject HttpClient _httpClient
+
+<div class="col-md-2">
+    <table class="table table-hover table-striped table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th>@Heading</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (planetListLoaded == false)
+            {
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <strong>Loading...</strong>
+                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                    </div>
+                </td>
+            </tr>
+            }
+            else
+            {
+                @for (int i = 0; i < Planets.Count; i++)
+                {
+                    <tr>
+                        <td><a href="@($"/planetdetails/{Planets[i].Url.Substring(29)}")">@Planets[i].Name</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public List<string> planets { get; set; }
+
+    [Parameter]
+    public string ErrorString { get; set; }
+
+    List<Planet> Planets = new List<Planet>();
+
+    private bool planetListLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var planet in planets)
+        {
+            string urlPpath = $"planets/{planet.Substring(29)}";
+
+            try
+            {
+                var p = await _httpClient.GetFromJsonAsync<Planet>(urlPpath);
+
+                Planets.Add(p);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorString = $"There was an error getting planet details: { ex.Message } { urlPpath }";
+            }
+        }
+
+        planetListLoaded = true;
+    }
+}

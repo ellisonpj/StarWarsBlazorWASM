@@ -1,0 +1,121 @@
+﻿@page "/characterdetails/{id}"
+@inject HttpClient _httpClient
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <h3>Character Details</h3>
+    <div class="h2">@errorString</div>
+}
+else if (character is null)
+{
+    <h3>Character Details</h3>
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <h3 class="text-center">Character Details - @character.Name</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="3" class="text-center">Character Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Height</td>
+                        <td>@character.Height</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Weight</td>
+                        <td>@character.Mass</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Hair Colour</td>
+                        <td>@character.Hair_color</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Skin Colour</td>
+                        <td>@character.Skin_color</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Eye Colour</td>
+                        <td>@character.Eye_color</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Birth Year</td>
+                        <td>@character.Birth_year</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Gender</td>
+                        <td>@character.Gender</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Homeworld</td>
+                        <td colspan="2">
+                            @if (String.IsNullOrWhiteSpace(character.Homeworld))
+                            {
+                                @character.Homeworld
+                            }
+                            else
+                            {
+                                <a href="@($"/planetdetails/{planet.Url.Substring(29)}")">@planet.Name</a>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <FilmList ErrorString="@errorString" films="@character.Films" Heading="Films"></FilmList>
+        <SpeciesList ErrorString="@errorString" species="@character.Species" Heading="Species"></SpeciesList>
+        <VehiclesList ErrorString="@errorString" vehicles="@character.Vehicles" Heading="Vehicles"></VehiclesList>
+        <StarshipsList ErrorString="@errorString" starships="@character.Starships" Heading="Starships"></StarshipsList>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    People character;
+    Planet planet;
+    string errorString;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        string urlPpath = $"people/{id}/";
+
+        try
+        {
+            character = await _httpClient.GetFromJsonAsync<People>(urlPpath);
+            errorString = null;
+
+            if (String.IsNullOrWhiteSpace(character.Homeworld) == false)
+            {
+                await GetPlanet(character.Homeworld);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting character details: { ex.Message } { urlPpath }";
+        }
+    }
+
+    private async Task GetPlanet(string homeworld)
+    {
+        string urlPpath = $"planets/{homeworld.Substring(29)}";
+
+        try
+        {
+            planet = await _httpClient.GetFromJsonAsync<Planet>(urlPpath);
+
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting planet details: { ex.Message } { urlPpath }";
+        }
+    }
+}

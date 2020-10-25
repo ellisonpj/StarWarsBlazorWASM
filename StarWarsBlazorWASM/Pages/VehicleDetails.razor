@@ -1,0 +1,96 @@
+﻿@page "/vehicledetails/{id}"
+@inject HttpClient _httpClient
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <h3>Vehicle Details</h3>
+    <div class="h2">@errorString</div>
+}
+else if (Vehicle is null)
+{
+    <h3>Vehicle Details</h3>
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <h3 class="text-center">Vehicle Details - @Vehicle.Name</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="3" class="text-center">Vehicle Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Model</td>
+                        <td>@Vehicle.Model</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Manufacturer</td>
+                        <td>@Vehicle.Manufacturer</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Cost in Credits</td>
+                        <td>@Vehicle.Cost_in_credits</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Length</td>
+                        <td>@Vehicle.Length</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Max Atmosphering Speed</td>
+                        <td>@Vehicle.Max_atmosphering_speed</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Crew</td>
+                        <td>@Vehicle.Crew</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Passengers</td>
+                        <td>@Vehicle.Passengers</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Cargo Capacity</td>
+                        <td>@Vehicle.Cargo_capacity</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Consumables</td>
+                        <td>@Vehicle.Consumables</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Vehicle Class</td>
+                        <td>@Vehicle.Vehicle_class</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <CharacterList ErrorString="@errorString" characters="@Vehicle.Pilots" Heading="Pilots"></CharacterList>
+        <FilmList ErrorString="@errorString" films="@Vehicle.Films" Heading="Films"></FilmList>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    Vehicle Vehicle;
+    string errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string urlPpath = $"vehicles/{id}/";
+
+        try
+        {
+            Vehicle = await _httpClient.GetFromJsonAsync<Vehicle>(urlPpath);
+            errorString = null;
+
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting Vehicle details: { ex.Message } { urlPpath }";
+        }
+    } 
+}

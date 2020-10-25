@@ -1,0 +1,104 @@
+﻿@page "/starshipdetails/{id}"
+@inject HttpClient _httpClient
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <h3>Starship Details</h3>
+    <div class="h2">@errorString</div>
+}
+else if (Starship is null)
+{
+    <h3>Starship Details</h3>
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <h3 class="text-center">Starship Details - @Starship.Name</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="3" class="text-center">Starship Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Model</td>
+                        <td>@Starship.Model</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Manufacturer</td>
+                        <td>@Starship.Manufacturer</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Cost in Credits</td>
+                        <td>@Starship.Cost_in_credits</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Length</td>
+                        <td>@Starship.Length</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Max Atmosphering Speed</td>
+                        <td>@Starship.Max_atmosphering_speed</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Crew</td>
+                        <td>@Starship.Crew</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Passengers</td>
+                        <td>@Starship.Passengers</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Cargo Capacity</td>
+                        <td>@Starship.Cargo_capacity</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Consumables</td>
+                        <td>@Starship.Consumables</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Hyperdrive Rating</td>
+                        <td>@Starship.Hyperdrive_rating</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">MGLT</td>
+                        <td>@Starship.MGLT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Starship Class</td>
+                        <td>@Starship.Starship_class</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <CharacterList ErrorString="@errorString" characters="@Starship.Pilots" Heading="Pilots"></CharacterList>
+        <FilmList ErrorString="@errorString" films="@Starship.Films" Heading="Films"></FilmList>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    Starship Starship;
+    string errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string urlPpath = $"starships/{id}/";
+
+        try
+        {
+            Starship = await _httpClient.GetFromJsonAsync<Starship>(urlPpath);
+            errorString = null;
+
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting Starship details: { ex.Message } { urlPpath }";
+        }
+    }
+}

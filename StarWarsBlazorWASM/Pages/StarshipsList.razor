@@ -1,0 +1,70 @@
+﻿@inject HttpClient _httpClient
+
+<div class="col-md-2">
+    <table class="table table-hover table-striped table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th>@Heading</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (starshipListLoaded == false)
+            {
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <strong>Loading...</strong>
+                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                    </div>
+                </td>
+            </tr>
+            }
+            else
+            {
+                @for (int i = 0; i < Starships.Count; i++)
+                {
+                    <tr>
+                        <td><a href="@($"/starshipdetails/{Starships[i].Url.Substring(31)}")">@Starships[i].Name</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public List<string> starships { get; set; }
+
+    [Parameter]
+    public string ErrorString { get; set; }
+
+    List<Starship> Starships = new List<Starship>();
+
+    private bool starshipListLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var ship in starships)
+        {
+            string urlPpath = $"starships/{ship.Substring(31)}";
+
+            try
+            {
+                var s = await _httpClient.GetFromJsonAsync<Starship>(urlPpath);
+
+                Starships.Add(s);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorString = $"There was an error getting ship details: { ex.Message } { urlPpath }";
+            }
+        }
+
+        starshipListLoaded = true;
+    }
+}

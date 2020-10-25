@@ -1,0 +1,103 @@
+﻿@page "/planetdetails/{id}"
+@inject HttpClient _httpClient
+
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <h3>Planet Details</h3>
+    <div class="h2">@errorString</div>
+}
+else if (planet is null)
+{
+    <h3>Planet Details</h3>
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <h3 class="text-center">Planet Details - @planet.Name</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="3" class="text-center">Planetary Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Rotation Period</td>
+                        <td>@planet.Rotation_period</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Orbital Period</td>
+                        <td>@planet.Orbital_period</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Diameter</td>
+                        <td>@planet.Diameter</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Climate</td>
+                        <td>@planet.Climate</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Gravity</td>
+                        <td>@planet.Gravity</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Terrain</td>
+                        <td>@planet.Terrain</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Surface Water</td>
+                        <td>@planet.Surface_water</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Population</td>
+                        <td colspan="2">@population</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <CharacterList ErrorString="@errorString" characters="@planet.Residents" Heading="Residents"></CharacterList>
+        <FilmList ErrorString="@errorString" films="@planet.Films" Heading="Films"></FilmList>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    Planet planet;
+    string errorString;
+    string population;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string urlPpath = $"planets/{id}/";
+
+        try
+        {
+            planet = await _httpClient.GetFromJsonAsync<Planet>(urlPpath);
+            errorString = null;
+
+            Int64 popNum;
+            Int64.TryParse(planet.Population, out popNum);
+
+            if (popNum == 0)
+            {
+                population = planet.Population;
+            }
+            else
+            {
+                population = Convert.ToInt64(planet.Population).ToString("N0");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting planet details: { ex.Message } { urlPpath }";
+        }
+    }
+}

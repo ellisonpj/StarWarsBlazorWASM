@@ -1,0 +1,54 @@
+﻿@page "/moviedetails/{id}"
+@inject HttpClient _httpClient
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <h3>Movie Details</h3>
+    <div class="h2">@errorString</div>
+}
+else if (Movie is null)
+{
+    <h3>Movie Details</h3>
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <h3 class="text-center">Movie Details - @Movie.Title</h3>
+    <div class="row">
+        <div class="col-sm-12">@Movie.Opening_crawl</div>
+    </div>
+
+    <br />
+    <div class="row">
+        <CharacterList Heading="Cast" characters="@Movie.Characters" ErrorString="@errorString"></CharacterList>
+        <PlanetList Heading="Planets" planets="@Movie.Planets" ErrorString="@errorString"></PlanetList>
+        <StarshipsList Heading="Starships" starships="@Movie.Starships" ErrorString="@errorString"></StarshipsList>
+        <VehiclesList Heading="Vehicles" vehicles="@Movie.Vehicles" ErrorString="@errorString"></VehiclesList>
+        <SpeciesList Heading="Species" species="@Movie.Species" ErrorString="@errorString"></SpeciesList>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+
+    Films Movie;
+    string errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string urlPpath = $"films/{id}/";
+
+
+        try
+        {
+            Movie = await _httpClient.GetFromJsonAsync<Films>(urlPpath);
+            errorString = null;
+        }
+        catch (Exception ex)
+        {
+            errorString = $"There was an error getting our film details: { ex.Message } { urlPpath }";
+        }
+    }
+}
