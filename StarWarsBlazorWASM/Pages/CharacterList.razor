@@ -35,13 +35,13 @@
 
 @code {
     [Parameter]
-    public string Heading { get; set; } =  string.Empty;
+    public string Heading { get; set; }
 
     [Parameter]
-    public List<string> characters { get; set; } = new();
+    public List<string> characters { get; set; }
 
     [Parameter]
-    public string ErrorString { get; set; } = string.Empty;
+    public string ErrorString { get; set; }
 
     List<People> people = new List<People>();
 

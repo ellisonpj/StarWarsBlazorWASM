@@ -2,20 +2,20 @@
 
 public class People
 {
-    public string Name { get; set; } = string.Empty;
-    public string Height { get; set; } = string.Empty;
-    public string Mass { get; set; } = string.Empty;
-    public string Hair_color { get; set; } = string.Empty;
-    public string Skin_color { get; set; } = string.Empty;
-    public string Eye_color { get; set; } = string.Empty;
-    public string Birth_year { get; set; } = string.Empty;
-    public string Gender { get; set; } = string.Empty;
-    public string Homeworld { get; set; } = string.Empty;
-    public List<string> Films { get; set; } = new();
-    public List<string> Species { get; set; } = new();
-    public List<string> Vehicles { get; set; } = new();
-    public List<string> Starships { get; set; } = new();
+    public string Name { get; set; }
+    public string Height { get; set; }
+    public string Mass { get; set; }
+    public string Hair_color { get; set; }
+    public string Skin_color { get; set; }
+    public string Eye_color { get; set; }
+    public string Birth_year { get; set; }
+    public string Gender { get; set; }
+    public string Homeworld { get; set; }
+    public List<string> Films { get; set; }
+    public List<string> Species { get; set; }
+    public List<string> Vehicles { get; set; }
+    public List<string> Starships { get; set; }
     public DateTime Created { get; set; }
     public DateTime Edited { get; set; }
-    public string Url { get; set; } = string.Empty;
+    public string Url { get; set; }
 }
