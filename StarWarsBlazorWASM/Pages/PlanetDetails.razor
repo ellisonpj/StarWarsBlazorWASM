@@ -1,6 +1,6 @@
 ﻿@page "/planetdetails/{id}"
 @inject HttpClient _httpClient
-
+@attribute [StreamRendering]
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {

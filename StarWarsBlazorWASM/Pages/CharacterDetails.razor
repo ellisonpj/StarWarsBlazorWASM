@@ -1,4 +1,5 @@
 ﻿@page "/characterdetails/{id}"
+@attribute [StreamRendering]
 @inject HttpClient _httpClient
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)

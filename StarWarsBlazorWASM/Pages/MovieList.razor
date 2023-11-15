@@ -1,5 +1,5 @@
 ﻿@page "/movielist"
-
+@attribute [StreamRendering]
 @inject HttpClient _httpClient
 
 <h3>Star Wars Movie List</h3>
@@ -31,7 +31,7 @@ else
             @foreach (var m in movies.Results)
             {
                 <tr>
-                    <td><a href="@($"/moviedetails/{m.Url.Substring(27)}")">@m.Title</a></td>
+                    <td><a href="@($"/moviedetails/{m.Url.Substring(28)}")">@m.Title</a></td>
                     <td>@m.Episode_id</td>
                     @*<td>@m.Opening_crawl</td>*@
                     <td>@m.Producer</td>
