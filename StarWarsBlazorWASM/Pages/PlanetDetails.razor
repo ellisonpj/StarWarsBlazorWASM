@@ -4,16 +4,19 @@
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
+    <PageTitle>Planet Details</PageTitle>
     <h3>Planet Details</h3>
     <div class="h2">@errorString</div>
 }
 else if (planet is null)
 {
+    <PageTitle>Planet Details</PageTitle>
     <h3>Planet Details</h3>
     <div class="h4">Loading...</div>
 }
 else
 {
+    <PageTitle>Planet Details - @planet.Name</PageTitle>
     <h3 class="text-center">Planet Details - @planet.Name</h3>
     <div class="row">
         <div class="col-md-4">
